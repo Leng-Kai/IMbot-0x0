@@ -35,7 +35,7 @@ module.exports = {
             return;
         }
 
-        interaction.reply({ content: '驗證成功！', ephemeral: true });
+        interaction.reply({ content: '驗證成功！\n你現在可以在左側的身份組頻道選擇想要的身份組。', ephemeral: true });
 
         const role_name = 'B' + studentId.substring(1, 3);
         const guild = interaction.guild;
