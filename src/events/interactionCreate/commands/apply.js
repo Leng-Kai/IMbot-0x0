@@ -70,7 +70,9 @@ module.exports = {
         });
         await interaction.editReply({ content: `驗證碼已寄到你的信箱：${'b' + studentId.substring(1)}@ntu.edu.tw，請在 ${time_limit} 秒內完成驗證。`, ephemeral: true });
         await wait(time_limit * 1000);
-        await applications.delete(studentId);
-        await interaction.followUp({ content: '已逾時，請重新驗證！', ephemeral: true });
+        if (applications.has(studentId)) {
+            await applications.delete(studentId);
+            await interaction.followUp({ content: '已逾時，請重新驗證！', ephemeral: true });
+        }
     },
 };
