@@ -30,7 +30,7 @@ module.exports = {
             return;
         }
 
-        if (applications.has(studentId)) {
+        if (applications.has(interaction.user.id)) {
             await interaction.editReply({ content: '請勿重複驗證！', ephemeral: true });
             return;
         }
@@ -70,8 +70,8 @@ module.exports = {
         });
         await interaction.editReply({ content: `驗證碼已寄到你的信箱：${'b' + studentId.substring(1)}@ntu.edu.tw，請在 ${time_limit} 秒內完成驗證。`, ephemeral: true });
         await wait(time_limit * 1000);
-        if (applications.has(studentId)) {
-            await applications.delete(studentId);
+        if (applications.has(interaction.user.id)) {
+            await applications.delete(interaction.user.id);
             await interaction.followUp({ content: '已逾時，請重新驗證！', ephemeral: true });
         }
     },
