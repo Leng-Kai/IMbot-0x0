@@ -13,30 +13,31 @@ module.exports = {
             .setDescription('Your verification code')
             .setRequired(true)),
     async execute(interaction) {
+        await interaction.deferReply({ ephemeral: true });
         if (interaction.channelId !== verification_channel) {
-            interaction.reply({ content: '此指令只能於驗證頻道使用！', ephemeral: true });
+            await interaction.editReply({ content: '此指令只能於驗證頻道使用！', ephemeral: true });
             return;
         }
 
         if (interaction.options.data.length != 1) {
-            interaction.reply({ content: 'Unexpected error.', ephemeral: true });
+            await interaction.editReply({ content: 'Unexpected error.', ephemeral: true });
             return;
         }
 
         verification_code_enter = interaction.options.data[0].value;
 
         if (!applications.has(interaction.user.id)) {
-            interaction.reply({ content: '請先申請驗證！', ephemeral: true });
+            await interaction.editReply({ content: '請先申請驗證！', ephemeral: true });
             return;
         }
 
         const { studentId, verification_code } = applications.get(interaction.user.id);
         if (verification_code_enter !== verification_code) {
-            interaction.reply({ content: '驗證碼錯誤！', ephemeral: true });
+            await interaction.editReply({ content: '驗證碼錯誤！', ephemeral: true });
             return;
         }
 
-        interaction.reply({ content: '驗證成功！\n你現在可以在左側的身份組頻道選擇想要的身份組。', ephemeral: true });
+        await interaction.editReply({ content: '驗證成功！\n你現在可以在左側的身份組頻道選擇想要的身份組。', ephemeral: true });
 
         const role_name = 'B' + studentId.substring(1, 3);
         const guild = interaction.guild;
