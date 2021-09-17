@@ -1,6 +1,7 @@
 const fs = require('fs');
 const { Client, Intents } = require('discord.js');
 const { token } = require('./config.json');
+const { discord_log } = require('./discord_log');
 
 intents = [
     Intents.FLAGS.GUILDS,
@@ -38,6 +39,10 @@ for (const type of eventTypes) {
         client.on(event.name, (...args) => event.execute(...args));
     }
 }
+
+process.on('unhandledRejection', error => {
+    discord_log('Unhandled promise rejection:' + error);
+});
 
 global.applications = new Map();
 
