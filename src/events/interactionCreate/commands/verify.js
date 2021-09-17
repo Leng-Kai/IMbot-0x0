@@ -1,5 +1,6 @@
 const { Permissions } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { discord_log } = require('../../../discord_log.js');
 const { verification_channel, ntuim_role, everyone_role } = require('../../../config.json');
 const wait = require('util').promisify(setTimeout);
 
@@ -67,7 +68,7 @@ module.exports = {
                     });
                 });
             } catch (err) {
-                console.error('Error creating category', err);
+                discord_log('Error creating category', err);
                 return;
             }
         }
@@ -77,13 +78,13 @@ module.exports = {
         try {
             member.roles.add(ntuim_role);
         } catch (err) {
-            console.error('Error adding role', err);
+            discord_log('Error adding role', err);
             return;
         }
         try {
             member.roles.add(role.id);
         } catch (err) {
-            console.error('Error adding role', err);
+            discord_log('Error adding role', err);
             return;
         }
     },

@@ -2,6 +2,7 @@ const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
+const { discord_log } = require('../../discord_log.js');
 const { clientId, guildId, token } = require('../../config.json');
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
@@ -24,16 +25,16 @@ const rest = new REST({ version: '9' }).setToken(token);
             Routes.applicationGuildCommands(clientId, guildId), { body: commands },
         );
 
-        console.log('Successfully registered application commands.');
+        discord_log('Successfully registered application commands.');
     } catch (error) {
-        console.error(error);
+        discord_log(error);
     }
 })();
 
 module.exports = {
     name: 'interactionCreate',
     async execute(interaction) {
-        console.log(`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`);
+        discord_log(`<@${interaction.user.id}> in <#${interaction.channel.id}> triggered an \`/${interaction.commandName}${interaction.options.data.length ? ' ' + interaction.options.data[0].value : ''}\` interaction.`);
 
         if (!interaction.isCommand()) return;
         const command = client.commands.get(interaction.commandName);
@@ -43,7 +44,7 @@ module.exports = {
         try {
             await command.execute(interaction);
         } catch (error) {
-            console.error(error);
+            discord_log(error);
             return interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
         }
     },

@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { discord_log } = require('../../../discord_log.js');
 const { verification_channel, email_address, email_password } = require('../../../config.json');
 var nodemailer = require('nodemailer');
 const wait = require('util').promisify(setTimeout);
@@ -59,9 +60,9 @@ module.exports = {
         };
         transporter.sendMail(mailOptions, function(error, info) {
             if (error) {
-                console.log(error);
+                discord_log(error);
             } else {
-                console.log('Email sent: ' + info.response);
+                discord_log('Email sent: ' + info.response);
             }
         });
         await wait(time_limit * 1000);

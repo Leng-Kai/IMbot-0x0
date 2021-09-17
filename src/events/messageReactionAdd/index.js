@@ -1,3 +1,4 @@
+const { discord_log } = require('../../discord_log.js');
 const { role_channel, role_message, roles } = require("../../config.json");
 
 module.exports = {
@@ -11,15 +12,17 @@ module.exports = {
         const member = guild.members.cache.get(user.id);
         const role = guild.roles.cache.find((role) => role.name === roles[_emoji]);
 
+        discord_log(`<@${user.id}> added reaction ${_emoji}.`);
+
         if (!role) {
-            console.error(`Role not found for '${_emoji.name}'`);
+            discord_log(`Role not found for '${_emoji.name}'`);
             return;
         }
 
         try {
             member.roles.add(role.id);
         } catch (err) {
-            console.error('Error adding role', err);
+            discord_log('Error adding role', err);
             return;
         }
     },

@@ -1,3 +1,4 @@
+const { discord_log } = require('../../discord_log.js');
 const { verification_channel, role_channel } = require("../../config.json");
 
 module.exports = {
@@ -7,6 +8,7 @@ module.exports = {
             return;
         }
 
+        discord_log(`<@${message.author.id}> sent a message in <#${message.channelId}>`);
         message.delete();
     },
 };
