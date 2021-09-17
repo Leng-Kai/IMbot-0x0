@@ -37,8 +37,10 @@ module.exports = {
 
         const time_limit = 300; // seconds
 
-        await interaction.editReply({ content: `驗證碼已寄到你的信箱：${'b' + studentId.substring(1)}@ntu.edu.tw，請在 ${time_limit} 秒內完成驗證。`, ephemeral: true });
-        verification_code = (Math.random() + 1).toString(36).toUpperCase().substring(2); // random string
+        verification_code = '';
+        while (verification_code.length < 5) {
+            verification_code = (Math.random() + 1).toString(36).toUpperCase().substring(2); // random string
+        }
         applications.set(interaction.user.id, { studentId, verification_code });
 
         transporter = nodemailer.createTransport({
@@ -66,6 +68,7 @@ module.exports = {
                 discord_log('Email sent: ' + info.response);
             }
         });
+        await interaction.editReply({ content: `驗證碼已寄到你的信箱：${'b' + studentId.substring(1)}@ntu.edu.tw，請在 ${time_limit} 秒內完成驗證。`, ephemeral: true });
         await wait(time_limit * 1000);
         await applications.delete(studentId);
         await interaction.followUp({ content: '已逾時，請重新驗證！', ephemeral: true });
