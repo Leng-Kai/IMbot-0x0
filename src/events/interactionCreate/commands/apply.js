@@ -13,30 +13,31 @@ module.exports = {
             .setDescription('Your NTU student ID')
             .setRequired(true)),
     async execute(interaction) {
+        await interaction.deferReply({ ephemeral: true });
         if (interaction.channelId !== verification_channel) {
-            interaction.reply({ content: '此指令只能於驗證頻道使用！', ephemeral: true });
+            await interaction.editReply({ content: '此指令只能於驗證頻道使用！', ephemeral: true });
             return;
         }
 
         if (interaction.options.data.length != 1) {
-            interaction.reply({ content: 'Unexpected error.', ephemeral: true });
+            await interaction.editReply({ content: 'Unexpected error.', ephemeral: true });
             return;
         }
 
         studentId = interaction.options.data[0].value;
         if (!studentId.match(/^(B|b)[0-9]{2}7050[0-9]{2}$/)) {
-            interaction.reply({ content: '學號格式錯誤！', ephemeral: true });
+            await interaction.editReply({ content: '學號格式錯誤！', ephemeral: true });
             return;
         }
 
         if (applications.has(studentId)) {
-            interaction.reply({ content: '請勿重複驗證！', ephemeral: true });
+            await interaction.editReply({ content: '請勿重複驗證！', ephemeral: true });
             return;
         }
 
         const time_limit = 300; // seconds
 
-        interaction.reply({ content: `驗證碼已寄到你的信箱：${'b' + studentId.substring(1)}@ntu.edu.tw，請在 ${time_limit} 秒內完成驗證。`, ephemeral: true });
+        await interaction.editReply({ content: `驗證碼已寄到你的信箱：${'b' + studentId.substring(1)}@ntu.edu.tw，請在 ${time_limit} 秒內完成驗證。`, ephemeral: true });
         verification_code = (Math.random() + 1).toString(36).toUpperCase().substring(2); // random string
         applications.set(interaction.user.id, { studentId, verification_code });
 
