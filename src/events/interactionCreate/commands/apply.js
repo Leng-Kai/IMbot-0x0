@@ -24,9 +24,26 @@ module.exports = {
             return;
         }
 
-        studentId = interaction.options.data[0].value;
-        if (!studentId.match(/^(B|b)[0-9]{2}7050[0-9]{2}$/)) {
-            await interaction.editReply({ content: '學號格式錯誤！', ephemeral: true });
+        // studentId = interaction.options.data[0].value;
+        applyToken = interaction.options.data[0].value;
+        tokenType = 0;
+        userEmail = ""
+
+        if (applyToken.match(/^(B|b)[0-9]{2}7050[0-9]{2}$/)) {
+            tokenType = 1;
+            userEmail = `${'b' + applyToken.substring(1)}@ntu.edu.tw`;
+        } else if (applyToken.match(/@ntu.im$/)) {
+            tokenType = 2;
+            userEmail = applyToken;
+        }
+
+        // if (!studentId.match(/^(B|b)[0-9]{2}7050[0-9]{2}$/)) {
+        //     await interaction.editReply({ content: '學號格式錯誤！', ephemeral: true });
+        //     return;
+        // }
+
+        if (tokenType === 0) {
+            await interaction.editReply({ content: '學號或信箱格式錯誤！', ephemeral: true });
             return;
         }
 
@@ -41,7 +58,7 @@ module.exports = {
         while (verification_code.length < 5) {
             verification_code = (Math.random() + 1).toString(36).toUpperCase().substring(2); // random string
         }
-        applications.set(interaction.user.id, { studentId, verification_code });
+        applications.set(interaction.user.id, { applyToken, verification_code, tokenType });
 
         transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -52,7 +69,8 @@ module.exports = {
         });
         mailOptions = {
             from: email_address,
-            to: `${'b' + studentId.substring(1)}@ntu.edu.tw`,
+            // to: `${'b' + studentId.substring(1)}@ntu.edu.tw`,
+            to: userEmail,
             subject: '台大資管系 Discord 線上系空間認證信',
             html: `<h4>此信件為台大資管系 Discord 線上系空間認證信，</h4>\
                    <h4>若你沒有申請加入，請無視此信件。</h4>\
@@ -68,7 +86,7 @@ module.exports = {
                 discord_log('Email sent: ' + info.response);
             }
         });
-        await interaction.editReply({ content: `驗證碼已寄到你的信箱：${'b' + studentId.substring(1)}@ntu.edu.tw，請在 ${time_limit} 秒內完成驗證。`, ephemeral: true });
+        await interaction.editReply({ content: `驗證碼已寄到你的信箱：${userEmail}，請在 ${time_limit} 秒內完成驗證。`, ephemeral: true });
         await wait(time_limit * 1000);
         if (applications.has(interaction.user.id)) {
             await applications.delete(interaction.user.id);
