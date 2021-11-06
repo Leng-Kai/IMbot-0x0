@@ -40,10 +40,17 @@ module.exports = {
         await applications.delete(interaction.user.id);
         await interaction.editReply({ content: '驗證成功！\n你現在可以在左側的身份組頻道選擇想要的身份組。', ephemeral: true });
 
+        const guild = interaction.guild;
+        const member = guild.members.cache.get(interaction.user.id);
+        try {
+            member.roles.add(ntuim_role);
+        } catch (err) {
+            discord_log('Error adding role', err);
+            return;
+        }
+
         if (tokenType === 1) {
             const role_name = 'B' + applyToken.substring(1, 3);
-            const guild = interaction.guild;
-            const member = guild.members.cache.get(interaction.user.id);
             role = await guild.roles.cache.find((role) => role.name === role_name);
 
             if (!role) {
@@ -78,12 +85,6 @@ module.exports = {
 
             await wait(3000);
 
-            try {
-                member.roles.add(ntuim_role);
-            } catch (err) {
-                discord_log('Error adding role', err);
-                return;
-            }
             try {
                 member.roles.add(role.id);
             } catch (err) {
